@@ -1,6 +1,7 @@
 package com.qa.ims.persistence.dao;
 
 import java.sql.Connection;
+
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -67,21 +68,39 @@ public class OrderDAO implements Dao<Order> {
 	 * 
 	 * @param order - takes in a order object. id will be ignored
 	 */
-	@Override
-	public Order create(Order order) {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement("INSERT INTO orders(order_date, customer_id) VALUES (?, ?)");) {
-			statement.setDate(1, (Date) order.getOrderDate());
-			statement.setDouble(2, order.getCustomerId());
-			statement.executeUpdate();
-			return readLatest();
-		} catch (Exception e) {
-			LOGGER.debug(e);
-			LOGGER.error(e.getMessage());
-		}
-		return null;
-	}
+	 @Override
+		public Order create(Order order) {
+			try (Connection connection = DBUtils.getInstance().getConnection();
+					PreparedStatement statement = connection
+							.prepareStatement("INSERT INTO orders(order_date, customer_id) VALUES (?, ?)");) {
+				statement.setDate(1, (Date) order.getOrderDate());
+				statement.setDouble(2, order.getCustomerId());
+				statement.executeUpdate();
+				return readLatest();
+			} catch (Exception e) {
+				LOGGER.debug(e);
+				LOGGER.error(e.getMessage());
+			}
+	      
+	        return null;
+	    }
+	 
+		public Order createItemOrder(Long orderId, Long itemId) {
+				try (Connection connection = DBUtils.getInstance().getConnection();
+						PreparedStatement statement = connection
+								.prepareStatement("INSERT INTO orders_items(order_id, items_id) VALUES (?, ?)");) {
+					statement.setLong(1, orderId);
+					statement.setLong(2, itemId);
+					statement.executeUpdate();
+					return readLatest();
+				} catch (Exception e) {
+					LOGGER.debug(e);
+					LOGGER.error(e.getMessage());
+				}
+				return null;
+			}
+			
+		
 
 	@Override
 	public Order read(Long id) {

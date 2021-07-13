@@ -24,7 +24,10 @@ public class ItemDAO implements Dao<Item> {
 		String name = resultSet.getString("name");
 		double value = resultSet.getDouble("value");
 		int quantity = resultSet.getInt("quantity");
-		return new Item(id, name, value, quantity);
+		String type = resultSet.getString("type");
+		String brand = resultSet.getString("brand");
+		String shaft = resultSet.getString("shaft");
+		return new Item(id, name, value, quantity, type, brand, shaft);
 	}
 
 	/**
@@ -71,10 +74,13 @@ public class ItemDAO implements Dao<Item> {
 	public Item create(Item item) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("INSERT INTO items(name, values, quantity) VALUES (?, ?, ?)");) {
+						.prepareStatement("INSERT INTO items(name, value, quantity, type, brand, shaft) VALUES (?, ?, ?, ?, ?, ?)");) {
 			statement.setString(1, item.getName());
 			statement.setDouble(2, item.getValue());
 			statement.setInt(3, item.getQuantity());
+			statement.setString(4, item.getType());
+			statement.setString(5, item.getBrand());
+			statement.setString(6, item.getShaft());
 			statement.executeUpdate();
 			return readLatest();
 		} catch (Exception e) {
@@ -111,10 +117,14 @@ public class ItemDAO implements Dao<Item> {
 	public Item update(Item item) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("UPDATE items SET name = ?, value = ?, quantity = ? WHERE id = ?");) {
+						.prepareStatement("UPDATE items SET name = ?, value = ?, quantity = ?, type = ?, brand = ?, shaft = ? WHERE id = ?");) {
 			statement.setString(1, item.getName());
 			statement.setDouble(2, item.getValue());
 			statement.setInt(3, item.getQuantity());
+			statement.setString(4, item.getType());
+			statement.setString(5, item.getBrand());
+			statement.setString(6, item.getShaft());
+			statement.setLong(7, item.getId());
 			statement.executeUpdate();
 			return read(item.getId());
 		} catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.qa.ims.utils;
 
+import java.sql.Date;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
@@ -50,6 +51,34 @@ public class Utils {
 			}
 		} while (doubleInput == null);
 		return doubleInput;
+	}
+	
+	public Integer getInt() {
+		String input = null;
+		Integer intInput = null;
+		do {
+			try {
+				input = getString();
+				intInput = Integer.parseInt(input);
+			} catch (NumberFormatException nfe) {
+				LOGGER.info("Error - Please enter a number");
+			}
+		} while (intInput == null);
+		return intInput;
+	}
+
+	public Date getDate() {
+		String input = null;
+		Date dateInput = null;
+		do {
+			try {
+				input = getString();
+				dateInput = Date.valueOf(input);
+			} catch (NumberFormatException nfe) {
+				LOGGER.info("Error - Please enter a date");
+			}
+		} while (dateInput == null);
+		return dateInput;
 	}
 
 }
