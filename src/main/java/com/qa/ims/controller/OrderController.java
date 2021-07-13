@@ -64,6 +64,8 @@ public class OrderController implements CrudController<Order> {
 		ItemController i = new ItemController(ItemDAO, utils);
 		i.readAll();
 		addItems(order);
+		
+		cost(order);
 	
 		return order;
 	}
@@ -91,9 +93,21 @@ public class OrderController implements CrudController<Order> {
 	 */
 	@Override
 	public int delete() {
-		LOGGER.info("\t1) Please enter the id of the order you would like to delete");
-		Long id = utils.getLong();
-		return orderDAO.delete(id);
+		LOGGER.info("\t   Chose an option from the following delete functions: ");
+		LOGGER.info("\t1) Delete an order");
+		LOGGER.info("\t2) Delete an item from an order");
+	
+		long selection = utils.getLong();		
+		if (selection == 1) {
+			LOGGER.info("Please enter the id of the order you would like to delete");
+			Long id = utils.getLong();
+			return orderDAO.delete(id);
+		} else if (selection == 2) {
+			return deleteItems();
+		}
+		
+		return 0;
+		
 	}
 	
 	/**
@@ -104,18 +118,56 @@ public class OrderController implements CrudController<Order> {
 		
 		Long item_id = utils.getLong();
 		orderDAO.createItemOrder(order.getId(), item_id);
-		System.out.println("Items added to order.");
+		System.out.println("Item added to order " + order.getId() + ".");
 		
-		System.out.println("Would you like to add another item?");
-		System.out.println("YES = 0 , NO = 1");
+		System.out.println("\tWould you like to add another item?");
+		System.out.println("\tYES = 0 , NO = 1");
 		if (utils.getLong() == 0) {
 			System.out.println("Enter the item id:");
 			addItems(order);
 		} else {
-			LOGGER.info("Order created: " + order.toString());
+			LOGGER.info("\nOrder created: " + order.toString());
 		}
 	}
+	
+	/**
+	 * Delete items of a specific order
+	 * 
+	 */
+	public int deleteItems() {
+
+		System.out.println("Enter the Order ID for the item to be deleted");
+		OrderController o = new OrderController(orderDAO, utils);
+		o.readAll();
+		Long order_id = utils.getLong();
+		System.out.println("Enter the Item ID for the item to be deleted");
+		ItemController i = new ItemController(ItemDAO, utils);
+		i.readAll();
+		Long item_id = utils.getLong();
+		orderDAO.deleteItem(order_id, item_id);
+
+		LOGGER.info("\nOrder deleted: " + order_id + "\nItem deleted: " + item_id);
+		return 0;
+
+	}
+	
+	/**
+	 * Calculate the cost of an order
+	 * 
+	 */
+	public void cost(Order order_id) {
 		
+		List<Double> itemsValues = orderDAO.orderCost(order_id);
+		
+		for(int i = 0; i < (itemsValues.size() - 1); i++)  {
+			   double sum = itemsValues.get(i) + itemsValues.get(i + 1);
+			   itemsValues.set(i, sum);
+			   itemsValues.remove(i + 1);
+			}
+		
+		System.out.println("The cost of this order is: £" + itemsValues.get(0));
+
+	}
 
 
 }

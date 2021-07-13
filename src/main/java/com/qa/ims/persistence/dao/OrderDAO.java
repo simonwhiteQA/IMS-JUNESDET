@@ -159,6 +159,39 @@ public class OrderDAO implements Dao<Order> {
 		}
 		return 0;
 	}
+	
+	
+	public int deleteItem(long order_id, long item_id) {
+		try (Connection connection = DBUtils.getInstance().getConnection();
+				PreparedStatement statement = connection.prepareStatement("DELETE FROM orders_items WHERE order_id = ? AND items_id = ?");) {
+			statement.setLong(1, order_id);
+			statement.setLong(2, item_id);
+			return statement.executeUpdate();
+		} catch (Exception e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		return 0;
+	}
+	
+	public List<Double> orderCost(Order order) {
+		try (Connection connection = DBUtils.getInstance().getConnection();
+				Statement statement = connection.createStatement();
+				ResultSet resultSet = statement.executeQuery("SELECT items.value FROM orders_items JOIN "
+						+ "items ON items.id=items_id WHERE order_id = " + order.getId());) {
+			List<Double> values = new ArrayList<>();
+			while (resultSet.next()) {
+				values.add(resultSet.getDouble(1));
+			}
+			return values;
+		} catch (SQLException e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		return new ArrayList<>();
+	}
+				
+		
 
 
 }

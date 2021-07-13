@@ -1,7 +1,6 @@
 package com.qa.ims.persistence.domain;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 public class Order {
@@ -9,7 +8,6 @@ public class Order {
 	private long id;
 	private Date orderDate;
 	private long customerId;
-	private List<Item> itemList;
 	
 	public Order(Date orderDate, long customerId) {
 		this.setOrderDate(orderDate);
@@ -68,14 +66,6 @@ public class Order {
 			return false;
 		Order other = (Order) obj;
 		return customerId == other.customerId && id == other.id && Objects.equals(orderDate, other.orderDate);
-	}
-
-	public List<Item> getItemList() {
-		return itemList;
-	}
-
-	public void setItemList(List<Item> itemList) {
-		this.itemList = itemList;
 	}
 	
 
