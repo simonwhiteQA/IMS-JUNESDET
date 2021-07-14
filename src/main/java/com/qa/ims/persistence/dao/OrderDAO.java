@@ -1,8 +1,6 @@
 package com.qa.ims.persistence.dao;
 
 import java.sql.Connection;
-
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,9 +21,8 @@ public class OrderDAO implements Dao<Order> {
 	@Override
 	public Order modelFromResultSet(ResultSet resultSet) throws SQLException {
 		Long id = resultSet.getLong("id");
-		Date orderDate = resultSet.getDate("order_date");
-		int customerId = resultSet.getInt("customer_id");
-		return new Order(id, orderDate, customerId);
+		Long customerId = resultSet.getLong("customer_id");
+		return new Order(id, customerId);
 	}
 
 	/**
@@ -72,9 +69,8 @@ public class OrderDAO implements Dao<Order> {
 		public Order create(Order order) {
 			try (Connection connection = DBUtils.getInstance().getConnection();
 					PreparedStatement statement = connection
-							.prepareStatement("INSERT INTO orders(order_date, customer_id) VALUES (?, ?)");) {
-				statement.setDate(1, (Date) order.getOrderDate());
-				statement.setDouble(2, order.getCustomerId());
+							.prepareStatement("INSERT INTO orders(customer_id) VALUES (?)");) {
+				statement.setLong(1, order.getCustomerId());
 				statement.executeUpdate();
 				return readLatest();
 			} catch (Exception e) {
@@ -129,10 +125,9 @@ public class OrderDAO implements Dao<Order> {
 	public Order update(Order order) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("UPDATE orders SET order_date = ?, customer_id = ? WHERE id = ?");) {
-			statement.setDate(1, (Date) order.getOrderDate());
-			statement.setDouble(2, order.getCustomerId());
-			statement.executeUpdate();
+						.prepareStatement("UPDATE orders SET customer_id = ? WHERE id = ?");) {
+			statement.setLong(1, order.getCustomerId());
+			statement.setLong(2, order.getId());
 			statement.executeUpdate();
 			return read(order.getId());
 		} catch (Exception e) {
@@ -149,8 +144,21 @@ public class OrderDAO implements Dao<Order> {
 	 */
 	@Override
 	public int delete(long id) {
+		deleteFromOrderItems(id);
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection.prepareStatement("DELETE FROM orders WHERE id = ?");) {
+			statement.setLong(1, id);
+			return statement.executeUpdate();
+		} catch (Exception e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		return 0;
+	}
+		
+	public int deleteFromOrderItems(long id) {
+		try (Connection connection = DBUtils.getInstance().getConnection();
+				PreparedStatement statement = connection.prepareStatement("DELETE FROM orders_items WHERE order_id = ?");) {
 			statement.setLong(1, id);
 			return statement.executeUpdate();
 		} catch (Exception e) {
