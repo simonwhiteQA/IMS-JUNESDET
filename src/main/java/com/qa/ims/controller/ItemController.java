@@ -16,7 +16,6 @@ import com.qa.ims.utils.Utils;
 public class ItemController implements CrudController<Item> {
 
 	public static final Logger LOGGER = LogManager.getLogger();
-
 	private ItemDAO itemDAO;
 	private Utils utils;
 
@@ -43,6 +42,7 @@ public class ItemController implements CrudController<Item> {
 	 */
 	@Override
 	public Item create() {
+		itemDAO.readAll();
 		LOGGER.info("\t1) Please enter the item name");
 		String name = utils.getString();
 		LOGGER.info("\t2) Please enter the items value");
@@ -65,6 +65,7 @@ public class ItemController implements CrudController<Item> {
 	 */
 	@Override
 	public Item update() {
+		itemDAO.readAll();
 		LOGGER.info("Please enter the id of the item you would like to update");
 		Long id = utils.getLong();
 		LOGGER.info("\t1) Please enter the item name");
@@ -91,8 +92,10 @@ public class ItemController implements CrudController<Item> {
 	 */
 	@Override
 	public int delete() {
-		LOGGER.info("/t1) Please enter the id of the item you would like to delete");
+		itemDAO.readAll();
+		LOGGER.info("\t1) Please enter the id of the item you would like to delete");
 		Long id = utils.getLong();
+		LOGGER.info("Item deleted: " + id);
 		return itemDAO.delete(id);
 	}
 
