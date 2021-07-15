@@ -1,15 +1,13 @@
 package com.qa.ims.controller;
 
-import java.sql.Date;
 import java.util.List;
 
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.qa.ims.persistence.dao.CustomerDAO;
-import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
+import com.qa.ims.persistence.dao.OrderItemsDAO;
 import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.utils.Utils;
 
@@ -20,16 +18,24 @@ import com.qa.ims.utils.Utils;
 public class OrderController implements CrudController<Order> {
 
 	public static final Logger LOGGER = LogManager.getLogger();
-	private static final ItemDAO ItemDAO = new ItemDAO();
-	private static final CustomerDAO CustomerDAO = new CustomerDAO();
-
-	private OrderDAO orderDAO;
+	private ItemController itemCon;
+	private CustomerController customerCon;
+	private OrderItemsDAO orderItemsDAO;
 	private Utils utils;
-
-	public OrderController(OrderDAO orderDAO, Utils utils) {
+	private OrderDAO orderDAO;
+	
+	public OrderController(ItemController itemCon, CustomerController customerCon, OrderItemsDAO orderItemsDAO, OrderDAO orderDAO, Utils utils) {
 		super();
+		this.itemCon = itemCon;
+		this.customerCon = customerCon;
+		this.orderItemsDAO = orderItemsDAO;
 		this.orderDAO = orderDAO;
 		this.utils = utils;
+	}
+
+
+	public OrderController(OrderDAO orderDAO2, Utils utils2) {
+		
 	}
 
 	/**
@@ -49,22 +55,16 @@ public class OrderController implements CrudController<Order> {
 	 */
 	@Override
 	public Order create() {
-		LOGGER.info("\t1) Please enter order date in format (yyyy-mm-dd)");
-		Date orderDate = utils.getDate();
-		LOGGER.info("\t2) Please enter the ID of the customer making the order");
-		CustomerController c = new CustomerController(CustomerDAO, utils);
-		c.readAll();
+		LOGGER.info("\t1) Please enter the ID of the customer making the order");
+		customerCon.readAll();
 		Long customerId = utils.getLong();
 		
-		// create order with date and customer
-		Order order = orderDAO.create(new Order(orderDate, customerId));
+		// create order with customer id
+		Order order = orderDAO.create(new Order(customerId));
 		
 		// add items to order
-		LOGGER.info("\t3) Please enter the ID of the item for the order");
-		ItemController i = new ItemController(ItemDAO, utils);
-		i.readAll();
-		addItems(order);
-		
+		addItems(order.getId());
+		LOGGER.info("Order created: " + order.toString());
 		cost(order);
 	
 		return order;
@@ -76,14 +76,20 @@ public class OrderController implements CrudController<Order> {
 	@Override
 	public Order update() {
 		LOGGER.info("\t1) Please enter the id of the order you would like to update");
+		this.readAll();
 		Long id = utils.getLong();
-		LOGGER.info("\t2) Please enter order date");
-		Date orderDate = utils.getDate();
-		LOGGER.info("\t3) Please enter the ID of the customer making the order");
-		Long customerId = utils.getLong();
-		Order order = orderDAO.update(new Order(id, orderDate, customerId));
-		LOGGER.info("Order updated: " + order.toString());
-		return order;
+		LOGGER.info("\t Would you like to add an item to an order or delete an item from an order?");
+		LOGGER.info("1) Add an item to order");
+		LOGGER.info("2) Delete an item to order");
+		
+		long selection = utils.getLong();		
+		if (selection == 1) {
+			addItems(id);
+		} else if (selection == 2) {
+			deleteItems(id);
+		}
+		return null;
+		
 	}
 
 	/**
@@ -93,81 +99,73 @@ public class OrderController implements CrudController<Order> {
 	 */
 	@Override
 	public int delete() {
-		LOGGER.info("\t   Chose an option from the following delete functions: ");
-		LOGGER.info("\t1) Delete an order");
-		LOGGER.info("\t2) Delete an item from an order");
-	
-		long selection = utils.getLong();		
-		if (selection == 1) {
-			LOGGER.info("Please enter the id of the order you would like to delete");
-			Long id = utils.getLong();
-			return orderDAO.delete(id);
-		} else if (selection == 2) {
-			return deleteItems();
-		}
-		
-		return 0;
-		
+
+		LOGGER.info("Please enter the id of the order you would like to delete");
+		readAll();
+		Long id = utils.getLong();
+		LOGGER.info("\nOrder deleted: " + id);
+		orderItemsDAO.delete(id);
+		return orderDAO.delete(id);
+
 	}
-	
+
 	/**
 	 * Loop of entering items to order
 	 * 
 	 */
-	public void addItems(Order order) {
-		
+	public int addItems(Long order_id) {
+
+		System.out.println("Enter the Item ID to add to order " + order_id);
+		itemCon.readAll();
 		Long item_id = utils.getLong();
-		orderDAO.createItemOrder(order.getId(), item_id);
-		System.out.println("Item added to order " + order.getId() + ".");
-		
+		orderItemsDAO.createItemOrder(order_id, item_id);
+
 		System.out.println("\tWould you like to add another item?");
 		System.out.println("\tYES = 0 , NO = 1");
 		if (utils.getLong() == 0) {
-			System.out.println("Enter the item id:");
-			addItems(order);
+			addItems(order_id);
 		} else {
-			LOGGER.info("\nOrder created: " + order.toString());
+			LOGGER.info("\nOrder function complete.");
 		}
+		return 0;
 	}
-	
+
 	/**
 	 * Delete items of a specific order
 	 * 
 	 */
-	public int deleteItems() {
+	public int deleteItems(Long order_id) {
 
-		System.out.println("Enter the Order ID for the item to be deleted");
-		OrderController o = new OrderController(orderDAO, utils);
-		o.readAll();
-		Long order_id = utils.getLong();
 		System.out.println("Enter the Item ID for the item to be deleted");
-		ItemController i = new ItemController(ItemDAO, utils);
-		i.readAll();
+		itemCon.readAll();
 		Long item_id = utils.getLong();
-		orderDAO.deleteItem(order_id, item_id);
+		orderItemsDAO.deleteItem(order_id, item_id);
 
-		LOGGER.info("\nOrder deleted: " + order_id + "\nItem deleted: " + item_id);
+		LOGGER.info("\nOrder: " + order_id + "\nItem deleted: " + item_id);
 		return 0;
 
 	}
-	
+
 	/**
 	 * Calculate the cost of an order
 	 * 
 	 */
-	public void cost(Order order_id) {
-		
-		List<Double> itemsValues = orderDAO.orderCost(order_id);
-		
-		for(int i = 0; i < (itemsValues.size() - 1); i++)  {
-			   double sum = itemsValues.get(i) + itemsValues.get(i + 1);
-			   itemsValues.set(i, sum);
-			   itemsValues.remove(i + 1);
-			}
-		
-		System.out.println("The cost of this order is: £" + itemsValues.get(0));
+	public void cost(Order order) {
+
+		List<Double> itemsValues = orderItemsDAO.orderCost(order);
+
+		for (int i = 0; i < (itemsValues.size() - 1); i++) {
+			double sum = itemsValues.get(i) + itemsValues.get(i + 1);
+			itemsValues.set(i, sum);
+			itemsValues.remove(i + 1);
+		}
+
+		if (itemsValues.isEmpty()) {
+			System.out.println("Cost = £0 (No items added to order)");
+		} else {
+			System.out.println("The cost of this order is: £" + itemsValues.get(0));
+		}
 
 	}
-
 
 }
