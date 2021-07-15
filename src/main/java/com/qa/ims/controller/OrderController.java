@@ -6,9 +6,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.qa.ims.persistence.dao.CustomerDAO;
-import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
+import com.qa.ims.persistence.dao.OrderItemsDAO;
 import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.utils.Utils;
 
@@ -19,16 +18,24 @@ import com.qa.ims.utils.Utils;
 public class OrderController implements CrudController<Order> {
 
 	public static final Logger LOGGER = LogManager.getLogger();
-	private static final ItemDAO ItemDAO = new ItemDAO();
-	private static final CustomerDAO CustomerDAO = new CustomerDAO();
-
-	private OrderDAO orderDAO;
+	private ItemController itemCon;
+	private CustomerController customerCon;
+	private OrderItemsDAO orderItemsDAO;
 	private Utils utils;
-
-	public OrderController(OrderDAO orderDAO, Utils utils) {
+	private OrderDAO orderDAO;
+	
+	public OrderController(ItemController itemCon, CustomerController customerCon, OrderItemsDAO orderItemsDAO, OrderDAO orderDAO, Utils utils) {
 		super();
+		this.itemCon = itemCon;
+		this.customerCon = customerCon;
+		this.orderItemsDAO = orderItemsDAO;
 		this.orderDAO = orderDAO;
 		this.utils = utils;
+	}
+
+
+	public OrderController(OrderDAO orderDAO2, Utils utils2) {
+		
 	}
 
 	/**
@@ -49,8 +56,7 @@ public class OrderController implements CrudController<Order> {
 	@Override
 	public Order create() {
 		LOGGER.info("\t1) Please enter the ID of the customer making the order");
-		CustomerController c = new CustomerController(CustomerDAO, utils);
-		c.readAll();
+		customerCon.readAll();
 		Long customerId = utils.getLong();
 		
 		// create order with customer id
@@ -70,8 +76,7 @@ public class OrderController implements CrudController<Order> {
 	@Override
 	public Order update() {
 		LOGGER.info("\t1) Please enter the id of the order you would like to update");
-		OrderController o = new OrderController(orderDAO, utils);
-		o.readAll();
+		this.readAll();
 		Long id = utils.getLong();
 		LOGGER.info("\t Would you like to add an item to an order or delete an item from an order?");
 		LOGGER.info("1) Add an item to order");
@@ -96,10 +101,10 @@ public class OrderController implements CrudController<Order> {
 	public int delete() {
 
 		LOGGER.info("Please enter the id of the order you would like to delete");
-		OrderController o = new OrderController(orderDAO, utils);
-		o.readAll();
+		readAll();
 		Long id = utils.getLong();
 		LOGGER.info("\nOrder deleted: " + id);
+		orderItemsDAO.delete(id);
 		return orderDAO.delete(id);
 
 	}
@@ -111,10 +116,9 @@ public class OrderController implements CrudController<Order> {
 	public int addItems(Long order_id) {
 
 		System.out.println("Enter the Item ID to add to order " + order_id);
-		ItemController i = new ItemController(ItemDAO, utils);
-		i.readAll();
+		itemCon.readAll();
 		Long item_id = utils.getLong();
-		orderDAO.createItemOrder(order_id, item_id);
+		orderItemsDAO.createItemOrder(order_id, item_id);
 
 		System.out.println("\tWould you like to add another item?");
 		System.out.println("\tYES = 0 , NO = 1");
@@ -133,10 +137,9 @@ public class OrderController implements CrudController<Order> {
 	public int deleteItems(Long order_id) {
 
 		System.out.println("Enter the Item ID for the item to be deleted");
-		ItemController i = new ItemController(ItemDAO, utils);
-		i.readAll();
+		itemCon.readAll();
 		Long item_id = utils.getLong();
-		orderDAO.deleteItem(order_id, item_id);
+		orderItemsDAO.deleteItem(order_id, item_id);
 
 		LOGGER.info("\nOrder: " + order_id + "\nItem deleted: " + item_id);
 		return 0;
@@ -147,9 +150,9 @@ public class OrderController implements CrudController<Order> {
 	 * Calculate the cost of an order
 	 * 
 	 */
-	public void cost(Order order_id) {
+	public void cost(Order order) {
 
-		List<Double> itemsValues = orderDAO.orderCost(order_id);
+		List<Double> itemsValues = orderItemsDAO.orderCost(order);
 
 		for (int i = 0; i < (itemsValues.size() - 1); i++) {
 			double sum = itemsValues.get(i) + itemsValues.get(i + 1);
@@ -157,7 +160,11 @@ public class OrderController implements CrudController<Order> {
 			itemsValues.remove(i + 1);
 		}
 
-		System.out.println("The cost of this order is: £" + itemsValues.get(0));
+		if (itemsValues.isEmpty()) {
+			System.out.println("Cost = £0 (No items added to order)");
+		} else {
+			System.out.println("The cost of this order is: £" + itemsValues.get(0));
+		}
 
 	}
 

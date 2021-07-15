@@ -17,6 +17,7 @@ import com.qa.ims.utils.DBUtils;
 public class OrderDAO implements Dao<Order> {
 
 	public static final Logger LOGGER = LogManager.getLogger();
+	OrderItemsDAO orderItemsDAO = new OrderItemsDAO();
 
 	@Override
 	public Order modelFromResultSet(ResultSet resultSet) throws SQLException {
@@ -81,22 +82,6 @@ public class OrderDAO implements Dao<Order> {
 	        return null;
 	    }
 	 
-		public Order createItemOrder(Long orderId, Long itemId) {
-				try (Connection connection = DBUtils.getInstance().getConnection();
-						PreparedStatement statement = connection
-								.prepareStatement("INSERT INTO orders_items(order_id, items_id) VALUES (?, ?)");) {
-					statement.setLong(1, orderId);
-					statement.setLong(2, itemId);
-					statement.executeUpdate();
-					return readLatest();
-				} catch (Exception e) {
-					LOGGER.debug(e);
-					LOGGER.error(e.getMessage());
-				}
-				return null;
-			}
-			
-		
 
 	@Override
 	public Order read(Long id) {
@@ -144,7 +129,6 @@ public class OrderDAO implements Dao<Order> {
 	 */
 	@Override
 	public int delete(long id) {
-		deleteFromOrderItems(id);
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection.prepareStatement("DELETE FROM orders WHERE id = ?");) {
 			statement.setLong(1, id);
@@ -156,50 +140,6 @@ public class OrderDAO implements Dao<Order> {
 		return 0;
 	}
 		
-	public int deleteFromOrderItems(long id) {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection.prepareStatement("DELETE FROM orders_items WHERE order_id = ?");) {
-			statement.setLong(1, id);
-			return statement.executeUpdate();
-		} catch (Exception e) {
-			LOGGER.debug(e);
-			LOGGER.error(e.getMessage());
-		}
-		return 0;
-	}
 	
-	
-	public int deleteItem(long order_id, long item_id) {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection.prepareStatement("DELETE FROM orders_items WHERE order_id = ? AND items_id = ?");) {
-			statement.setLong(1, order_id);
-			statement.setLong(2, item_id);
-			return statement.executeUpdate();
-		} catch (Exception e) {
-			LOGGER.debug(e);
-			LOGGER.error(e.getMessage());
-		}
-		return 0;
-	}
-	
-	public List<Double> orderCost(Order order) {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT items.value FROM orders_items JOIN "
-						+ "items ON items.id=items_id WHERE order_id = " + order.getId());) {
-			List<Double> values = new ArrayList<>();
-			while (resultSet.next()) {
-				values.add(resultSet.getDouble(1));
-			}
-			return values;
-		} catch (SQLException e) {
-			LOGGER.debug(e);
-			LOGGER.error(e.getMessage());
-		}
-		return new ArrayList<>();
-	}
-				
-		
-
 
 }
