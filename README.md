@@ -13,6 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to install the software and how to install them
 
 [Git download.](https://git-scm.com/downloads)
+
 [Eclipse download.](https://www.eclipse.org/downloads/)
 
 ### Installing
@@ -20,15 +21,15 @@ What things you need to install the software and how to install them
 A step by step series of examples that tell you how to get a development env running
 
 Copy this project url: https://github.com/simonwhiteQA/IMS-JUNESDET.git
-Open Git bash
-Git clone the project url to your workspace.
-Open Eclipse IDE
-The maven project should now be available for development and testing 
+* Open Git bash
+* Git clone the project url to your workspace.
+* Open Eclipse IDE
+* The maven project should now be available for development and testing 
 
 To access the IMS from Eclipse, run the "Runner.java" class.
-Try and enter the following commands when prompted:
-customer -> create -> Bob -> Jenkins 
-This should create customer [id, "Bob", "Jenkins"]
+* Try and enter the following commands when prompted:
+* customer -> create -> Bob -> Jenkins 
+* This should create customer [id, "Bob", "Jenkins"]
 
 
 ## Running the tests
@@ -54,25 +55,26 @@ Explain what these tests test, why and how to run them
 Unit testing is a testing approach that targets the very fundamental building blocks of an application, the idea is to prove that each 'unit' of the application is functioning as expected. This is an automated process that can be run by performing the follwing:
 
 *Controller Tests*
-Test location: IMSJUNESDET/src/test/java/
-Package: com.qa.ims.contollers
-Description: The controller tests run unit testing for the customer, item and order controllers and their respective methods.
+* Test location: IMSJUNESDET/src/test/java/
+* Package: com.qa.ims.contollers
+* Description: The controller tests run unit testing for the customer, item and order controllers and their respective methods.
 
 *DAO Tests*
-Test location: IMSJUNESDET/src/test/java/
-Package: com.qa.ims.dao
-Description: The dao tests run unit testing for the customer, item, order and order_item data access objects and their respective methods.
+* Test location: IMSJUNESDET/src/test/java/
+* Package: com.qa.ims.dao
+* Description: The dao tests run unit testing for the customer, item, order and order_item data access objects and their respective methods.
 
 *Domain Tests*
-Test location: IMSJUNESDET/src/test/java/
-Package: com.qa.ims.domain
-Description: The domain tests run unit testing for the customer, item and order to ensure the classes hash code and equals are verified.
+* Test location: IMSJUNESDET/src/test/java/
+* Package: com.qa.ims.domain
+* Description: The domain tests run unit testing for the customer, item and order to ensure the classes hash code and equals are verified.
 
 ## Deployment
 
 After *cloning* the repository to Git you will be able to run the IMS system on command line via the jar file:
-Eclipse -> right click project file -> properties -> location (show in system explorer) -> right click -> git bash here
+* Eclipse -> right click project file -> properties -> location (show in system explorer) -> right click -> git bash here
 -> cd target -> java -jar jar[FileNameIncludingDependencies].jar 
+
 **ensure the jar file you run is the file that includes dependencies in order for the IMS system to function as intended**
 
 ## Built With
