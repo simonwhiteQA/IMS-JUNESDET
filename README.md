@@ -1,7 +1,8 @@
-Coverage: 34%
-# Project Title
+Coverage: 80.9%
+# Fundamental Project: Inventory Management System (IMS)
 
-One Paragraph of project description goes here
+To create a functional application – using supporting tools, methodologies, and technologies – which encapsulates all fundamental modules covered during training.
+Specifically, you are required to create an application using the language from your Programming Fundamentals week which interacts with a managed database. 
 
 ## Getting Started
 
@@ -11,58 +12,70 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to install the software and how to install them
 
-```
-Give examples
-```
+[Git download.](https://git-scm.com/downloads)
+
+[Eclipse download.](https://www.eclipse.org/downloads/)
 
 ### Installing
 
 A step by step series of examples that tell you how to get a development env running
 
-Say what the step will be
+Copy this project url: https://github.com/simonwhiteQA/IMS-JUNESDET.git
+* Open Git bash
+* Git clone the project url to your workspace.
+* Open Eclipse IDE
+* The maven project should now be available for development and testing 
 
-```
-Give the example
-```
+To access the IMS from Eclipse, run the "Runner.java" class.
+* Try and enter the following commands when prompted:
+* customer -> create -> Bob -> Jenkins 
+* This should create customer [id, "Bob", "Jenkins"]
 
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
-Explain how to run the automated tests for this system. Break down into which tests and what they do
+Running automated tests:
+
+*The whole system*: Right click IMSJUNESDET/src/test/java/ in Eclipse -> coverage as -> junit test
+This will return all the unit tests and the coverage the tests cover for the system.
+
+*Controller tests*: Right click IMSJUNESDET/src/test/java/com.qa.ims.contollers in Eclipse -> run as -> junit test
+This will return all the unit tests included in the controllers package for customer, item and order classes.
+
+*Dao tests*: Right click IMSJUNESDET/src/test/java/com.qa.ims.dao in Eclipse -> run as -> junit test
+This will return all the unit tests included in the data access object package for customer, item, order and order_item classes.
+
+*Domain system*: Right click IMSJUNESDET/src/test/java/com.qa.ims.domain in Eclipse -> run as -> junit test
+This will return all the unit tests included in the domain package for customer, item and order classes.
 
 ### Unit Tests 
 
 Explain what these tests test, why and how to run them
 
-```
-Give an example
-```
+Unit testing is a testing approach that targets the very fundamental building blocks of an application, the idea is to prove that each 'unit' of the application is functioning as expected. This is an automated process that can be run by performing the follwing:
 
-### Integration Tests 
-Explain what these tests test, why and how to run them
+*Controller Tests*
+* Test location: IMSJUNESDET/src/test/java/
+* Package: com.qa.ims.contollers
+* Description: The controller tests run unit testing for the customer, item and order controllers and their respective methods.
 
-```
-Give an example
-```
+*DAO Tests*
+* Test location: IMSJUNESDET/src/test/java/
+* Package: com.qa.ims.dao
+* Description: The dao tests run unit testing for the customer, item, order and order_item data access objects and their respective methods.
 
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
+*Domain Tests*
+* Test location: IMSJUNESDET/src/test/java/
+* Package: com.qa.ims.domain
+* Description: The domain tests run unit testing for the customer, item and order to ensure the classes hash code and equals are verified.
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+After *cloning* the repository to Git you will be able to run the IMS system on command line via the jar file:
+* Eclipse -> right click project file -> properties -> location (show in system explorer) -> right click -> git bash here
+-> cd target -> java -jar jar[FileNameIncludingDependencies].jar 
+
+**ensure the jar file you run is the file that includes dependencies in order for the IMS system to function as intended**
 
 ## Built With
 
@@ -74,7 +87,8 @@ We use [SemVer](http://semver.org/) for versioning.
 
 ## Authors
 
-* **Chris Perrins** - *Initial work* - [christophperrins](https://github.com/christophperrins)
+* **Simon White** -  [simonwhite](https://github.com/simonwhiteQA)
+* Jira [IMS](https://simonwhite.atlassian.net/jira/software/projects/IMS/boards/3/roadmap)
 
 ## License
 
@@ -84,6 +98,6 @@ This project is licensed under the MIT license - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+I would like to thank Alan Davis and Pawel Stypulkowski for their continued help throughout the process of developing this IMS project. Also, for the training they provided in the weeks upcoming to this project to ensure I was prepared to tackle the task efficiently.
+
+I would like to further my thanks to Niall Duggan and Megan Crouch for their support as part of Team 4 to give assistance when blockers occured.
