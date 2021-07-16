@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderItems.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ims</a> &gt; <a href="index.source.html" class="el_package">com.qa.ims.persistence.domain</a> &gt; <span class="el_source">OrderItems.java</span></div><h1>OrderItems.java</h1><pre class="source lang-java linenums">package com.qa.ims.persistence.domain;
+
+import java.util.Objects;
+
+public class OrderItems {
+	
+	private Long id;
+	private Long orderId;
+	private Long itemId;
+	
+	public OrderItems(Long orderId, Long itemId) {
+<span class="nc" id="L12">		super();</span>
+<span class="nc" id="L13">		this.orderId = orderId;</span>
+<span class="nc" id="L14">		this.itemId = itemId;</span>
+<span class="nc" id="L15">	}</span>
+	
+	public OrderItems(Long id, Long orderId, Long itemId) {
+<span class="fc" id="L18">		super();</span>
+<span class="fc" id="L19">		this.id = id;</span>
+<span class="fc" id="L20">		this.orderId = orderId;</span>
+<span class="fc" id="L21">		this.itemId = itemId;</span>
+<span class="fc" id="L22">	}</span>
+	
+	public Long getId() {
+<span class="fc" id="L25">		return id;</span>
+	}
+	public void setId(Long id) {
+<span class="nc" id="L28">		this.id = id;</span>
+<span class="nc" id="L29">	}</span>
+	public Long getOrderId() {
+<span class="fc" id="L31">		return orderId;</span>
+	}
+	public void setOrderId(Long orderId) {
+<span class="nc" id="L34">		this.orderId = orderId;</span>
+<span class="nc" id="L35">	}</span>
+	public Long getItemId() {
+<span class="fc" id="L37">		return itemId;</span>
+	}
+	public void setItemId(Long itemId) {
+<span class="nc" id="L40">		this.itemId = itemId;</span>
+<span class="nc" id="L41">	}</span>
+
+	@Override
+	public String toString() {
+<span class="nc" id="L45">		return &quot;OrderItems [id=&quot; + id + &quot;, orderId=&quot; + orderId + &quot;, itemId=&quot; + itemId + &quot;]&quot;;</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L50">		return Objects.hash(id, itemId, orderId);</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">		if (this == obj)</span>
+<span class="nc" id="L56">			return true;</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">		if (obj == null)</span>
+<span class="nc" id="L58">			return false;</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">		if (getClass() != obj.getClass())</span>
+<span class="nc" id="L60">			return false;</span>
+<span class="fc" id="L61">		OrderItems other = (OrderItems) obj;</span>
+<span class="pc bpc" id="L62" title="2 of 4 branches missed.">		return Objects.equals(id, other.id) &amp;&amp; Objects.equals(itemId, other.itemId)</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">				&amp;&amp; Objects.equals(orderId, other.orderId);</span>
+	}
+	
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
