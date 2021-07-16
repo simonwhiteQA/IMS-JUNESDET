@@ -145,7 +145,7 @@ public class OrderController implements CrudController<Order> {
 		return 0;
 
 	}
-
+	
 	/**
 	 * Calculate the cost of an order
 	 * 
